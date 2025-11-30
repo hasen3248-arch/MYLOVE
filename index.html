@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title> كل عام وانتي بالف خير بيبي </title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#060607; --card:#0f1113; --accent:#d4af37; --muted:#bdbdbd; --glass:rgba(255,255,255,0.04);
+      --accent-2:#ffd166;
+    }
+    *{box-sizing:border-box;font-family:'Cairo',sans-serif}
+    body{margin:0;background:radial-gradient(ellipse at 20% 10%, rgba(212,175,55,0.06), transparent 10%), linear-gradient(180deg,#040404 0%, #0b0b0c 100%);color:#eee;min-height:100vh}
+    .container{max-width:980px;margin:40px auto;padding:24px}
+
+    /* Header */
+    .hero{position:relative;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:18px;padding:28px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.6)}
+    .moon{position:absolute;left:-120px;top:-60px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #fff9d6 0%, #f0e3b0 20%, #c9b07a 50%, transparent 60%);filter:blur(10px);opacity:.12;transform:rotate(12deg)}
+    .title{display:flex;align-items:center;justify-content:space-between}
+    .title h1{font-size:34px;margin:0;color:var(--accent);letter-spacing:1px}
+    .subtitle{color:var(--muted);margin-top:6px}
+
+    /* Controls */
+    .controls{margin-top:14px;display:flex;gap:12px;flex-wrap:wrap}
+    .btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:10px 14px;border-radius:10px;cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg, rgba(212,175,55,0.12), rgba(212,175,55,0.06));border:1px solid rgba(212,175,55,0.28);color:var(--accent);font-weight:700}
+
+    /* Secret button */
+    .secret-wrap{margin-top:18px}
+    .secret{display:inline-block;padding:12px 18px;border-radius:12px;background:linear-gradient(90deg,#111 10%, rgba(255,255,255,0.02));border:1px dashed rgba(255,255,255,0.04);cursor:pointer}
+
+    /* Heart animation */
+    .hearts{position:fixed;left:20px;bottom:20px;pointer-events:none}
+    .heart{position:absolute;font-size:22px;opacity:0;transform:translateY(0) scale(0.8)}
+
+    /* layout */
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:20px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:16px;border-radius:14px;border:1px solid rgba(255,255,255,0.03)}
+
+    /* timeline */
+    .timeline{max-height:300px;overflow:auto;padding-right:8px}
+    .timeline .item{padding:10px 0;border-bottom:1px dashed rgba(168, 32, 32, 0.03)}
+    .timeline .year{font-weight:700;color:var(--accent)}
+
+    /* message recorder */
+    .recorder{display:flex;gap:8px;align-items:center}
+    input[type=file]{display:none}
+
+    /* counter */
+    .counter{font-size:22px;font-weight:700;color:var(--accent-2)}
+
+    /* footer */
+    .credits{margin-top:20px;color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media (max-width:880px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+   
+  <div class="container">
+    <div class="hero">
+      <div class="moon" aria-hidden="true"></div>
+      <div class="title">
+        <div>
+          <h1>عيد ميلاد دكتورتييييي ✨</h1>
+          <div class="subtitle">"إلى هولير… أنتِ القمر الذي ينير لي الليالي،
+والنجمة التي تزين أيامي… أحبك أكثر من كل الكلمات." </div>
+        </div>
+        <div style="text-align:left">
+          <div class="counter" id="daysCounter">— أيام ونحن نحبّك —</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:6px">اضغط "تعيين" لتبدأ العدّ</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn primary" id="playMusic">شغلي موسقى قلبي  </button>
+        <button class="btn" id="toggleHearts">شغلي  قلوب</button>
+        <button class="btn" id="showSecret">اضغطي هون يا هولير</button>
+        <label class="btn" for="audioUpload">ارفق رسالة صوتية</label>
+        <input type="file" id="audioUpload" accept="audio/*">
+      </div>
+
+      <div class="secret-wrap" id="secretMessage" style="display:none;margin-top:14px">
+        <div class="card" style="background:linear-gradient(90deg, rgba(212,175,55,0.04), transparent);border:1px solid rgba(212,175,55,0.14)">
+          <h3 style="margin:0;color:var(--accent)">رسالة خاصة</h3>
+          <p style="margin-top:8px;color:#f3efe0"> حبيبتي بحبك كتير عمري و برجع هون بقلك اسف اذا حسستك اني بخونك دليمن ولا تراني ميتة عليكي </p>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn primary" id="revealMore">أظهر أكثر</button>
+            <button class="btn" id="downloadNote">تحميل الرسالة كصورة</button>
+          </div>
+          <div id="moreText" style="display:none;margin-top:10px;color:var(--muted)">لو تحبين اسمعي الأغنية، وغني باسمك القمر.. لأنك تستحقين أن يُحلف لك القمر.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0;color:var(--accent)">تايملاين — لحظاتك</h3>
+          <div class="timeline" id="timeline">
+            <!-- sample entries -->
+            <div class="item"><div class="year">2005/12/1</div><div>بهاد ليل عرفت اجا جامل ملاك في حياة كان اجمل لحظة اعيشه </div></div>
+            <div class="item"><div class="year">2019</div><div>هون عرفت اني احببت اجمل امرة في حياة كله </div></div>
+            <div class="item"><div class="year">2025/12/1</div><div>واليوم هاي نحن هلا ب تمام ساعه 00:00 عيد ميلاد حبيبت عمري </div></div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <input id="timelineYear" placeholder="سنة" style="padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff">
+            <input id="timelineText" placeholder="وصف" style="padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff;flex:1">
+            <button class="btn" id="addTimeline">أضف</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h3 style="margin-top:0;color:var(--accent)"> هاي شعر ثاني ل اجمل شخص في حياتي ( ما رح قول كون لان انتي بس ل الي اكوي )  </h3>
+          <textarea id="giftText" rows="6" style="width:100%;padding:12px;border-radius:10px;background:#050506;border:1px solid rgba(255,255,255,0.03);color:#fff">.إلى هولير…
+يا نسيم الصباح حين يرقص على وجنتيك،
+يا نغمة القلب التي لا تتوقف عن الغناء،
+يا قمر الليالي الطويلة،
+والشمس التي تشرق في قلبي قبل عينيّ.
+
+هولير…
+كل حرفٍ من اسمك يشعل السماء في داخلي،
+وكل مرة أنطقها،
+يتوهج العالم من حولي كما لو أن الكون كله يبتسم لك.
+
+في عيد ميلادك…
+أريد أن أخبرك أن كل دقيقة بقربك هي أغنية،
+وكل ثانية هي وردة لا تذبل أبداً،
+أنتِ الحلم الذي تحقق،
+والسعادة التي لا تنتهي،
+والحب الذي لا يعرف حدوداً أو زماناً.
+
+هولير…
+لو كان للعالم كل نجمة،
+لكنتِ أحرقتيها ضياءً لي،
+ولو كان لكل قلب نبض…
+لكنتِ النبضة التي تدفع كل قلبي للحياة.
+
+كل سنة وأنتِ…
+أجمل من كل الشعر،
+أعمق من كل الكلمات،
+وأغلى من كل ما يملك هذا الكون.</textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn primary" id="copyText">نسخ النص</button>
+            <button class="btn" id="downloadTxt">تحميل txt</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0;color:var(--accent)"> هاي قمري و اسمها </h3>
+          <div style="text-align:center;padding:18px">
+            <div style="font-size:36px;font-weight:800;letter-spacing:2px;color:var(--accent)">هوليرتي </div>
+            <div style="margin-top:8px;color:var(--muted)">اسمك على ضوء القمر</div>
+            <canvas id="moonCanvas" width="300" height="300" style="margin-top:12px;border-radius:12px"></canvas>
+          </div>
+          <div style="margin-top:6px;display:flex;gap:8px;align-items:center;justify-content:center">
+            <input type="date" id="startDate" style="padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:#fff">
+            <button class="btn" id="setCounter">تعيين</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h3 style="margin-top:0;color:var(--accent)">الموسيقى</h3>
+          <p style="color:var(--muted);font-size:14px">أضف رابط ملف صوتي (mp3) أو رابط مباشر لتشغيل "حلف القمر" هنا.</p>
+          <input id="musicUrl" placeholder="ضع رابط mp3 هنا (اختياري)" style="width:100%;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:#fff">
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn primary" id="loadMusic">تحميل</button>
+            <button class="btn" id="stopMusic">إيقاف</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="credits">هون قدمت جزء من تخصصي و اقدملك في يوم ميلادك لوف يو بيبي و موقع تبعك ل طب اسنان يمي انا اسويلك لوف يو ولك حب   .</div>
+  </div>
+
+  <div class="hearts" id="heartsContainer"></div>
+
+  <audio id="bgAudio" loop crossorigin="anonymous"></audio>
+
+  <script>
+    // helpers
+    const $ = sel=>document.querySelector(sel);
+    const playBtn = $('#playMusic');
+    const bgAudio = $('#bgAudio');
+    const heartsContainer = $('#heartsContainer');
+    let heartsOn = false;
+
+    // hearts animation
+    function makeHeart(){
+      const h = document.createElement('div');
+      h.className='heart';
+      h.textContent='❤';
+      const left = Math.random()*60 + '%';
+      h.style.left = left; h.style.bottom = '-10px';
+      heartsContainer.appendChild(h);
+      const animDuration = 3500 + Math.random()*2500;
+      h.animate([
+        {transform:'translateY(0) scale(0.8)',opacity:0},
+        {transform:'translateY(-200px) scale(1.1)',opacity:1,offset:0.2},
+        {transform:'translateY(-450px) scale(0.6)',opacity:0}
+      ],{duration:animDuration,easing:'cubic-bezier(.2,.9,.2,1)'});
+      setTimeout(()=>h.remove(),animDuration);
+    }
+
+    $('#toggleHearts').addEventListener('click',()=>{
+      heartsOn = !heartsOn;
+      $('#toggleHearts').textContent = heartsOn? 'ايقاف القلوب':'تشغيل قلوب';
+      if(heartsOn){ window._heartInterval = setInterval(makeHeart,420); } else { clearInterval(window._heartInterval); }
+    });
+
+    // secret button
+    $('#showSecret').addEventListener('click',()=>{
+      const s = $('#secretMessage');
+      s.style.display = s.style.display==='none'?'block':'none';
+    });
+    $('#revealMore').addEventListener('click',()=>{ $('#moreText').style.display='block'; });
+
+    // timeline add
+    $('#addTimeline').addEventListener('click',()=>{
+      const y = $('#timelineYear').value.trim();
+      const t = $('#timelineText').value.trim();
+      if(!y||!t) return alert('حط سنة ونص');
+      const itm = document.createElement('div'); itm.className='item';
+      itm.innerHTML = `<div class="year">${escapeHtml(y)}</div><div>${escapeHtml(t)}</div>`;
+      $('#timeline').prepend(itm);
+      $('#timelineYear').value='';$('#timelineText').value='';
+    });
+
+    // copy & download text
+    $('#copyText').addEventListener('click',()=>{
+      const txt = $('#giftText').value;
+      navigator.clipboard.writeText(txt).then(()=>alert('نُسخ النص!'))
+    });
+    $('#downloadTxt').addEventListener('click',()=>{
+      const a = document.createElement('a');
+      const blob = new Blob([$('#giftText').value],{type:'text/plain;charset=utf-8'});
+      a.href = URL.createObjectURL(blob); a.download='message_for_holier.txt'; a.click();
+    });
+
+    // audio upload handling
+    $('#audioUpload').addEventListener('change',(e)=>{
+      const f = e.target.files[0];
+      if(!f) return;
+      const url = URL.createObjectURL(f);
+      bgAudio.src = url; bgAudio.play(); playBtn.textContent='ايقاف الموسيقى';
+    });
+
+    // music load from URL
+    $('#loadMusic').addEventListener('click',()=>{
+      const url = $('#musicUrl').value.trim(); if(!url) return alert('حط رابط mp3');
+      bgAudio.src = url; bgAudio.play(); playBtn.textContent='ايقاف الموسيقى';
+    });
+    $('#stopMusic').addEventListener('click',()=>{ bgAudio.pause(); bgAudio.currentTime=0; playBtn.textContent='تشغيل الموسيقى'; });
+
+    playBtn.addEventListener('click',()=>{
+      if(bgAudio.paused){ bgAudio.play(); playBtn.textContent='ايقاف الموسيقى'; } else { bgAudio.pause(); playBtn.textContent='تشغيل الموسيقى'; }
+    });
+
+    // set counter
+    $('#setCounter').addEventListener('click',()=>{
+      const d = $('#startDate').value; if(!d) return alert('اختر تاريخ البداية');
+      localStorage.setItem('holier_start', d);
+      updateCounter();
+    });
+    function updateCounter(){
+      const d = localStorage.getItem('holier_start');
+      const el = $('#daysCounter');
+      if(!d){ el.textContent = '— ضع تاريخ بداية —'; return }
+      const start = new Date(d+'T00:00:00');
+      const now = new Date();
+      const diff = Math.floor((now - start)/(1000*60*60*24));
+      el.textContent = diff>=0? `${diff} يوم من الحب ❤` : 'التاريخ في المستقبل';
+    }
+    updateCounter(); setInterval(updateCounter,1000*60*5);
+
+    // moon canvas
+    const canvas = document.getElementById('moonCanvas'); const ctx = canvas.getContext('2d');
+    function drawMoon(){
+      const w=canvas.width,h=canvas.height; ctx.clearRect(0,0,w,h);
+      // background
+      const grad = ctx.createLinearGradient(0,0,0,h); grad.addColorStop(0,'#0b0b0c'); grad.addColorStop(1,'#191919');
+      ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+      // moon
+      const cx=w/2, cy=h/2, r=96;
+      const g = ctx.createRadialGradient(cx-18,cy-12,10,cx,cy,r); g.addColorStop(0,'#fff9d6'); g.addColorStop(0.4,'#f3e3a8'); g.addColorStop(0.9,'#c6ad6f');
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+      // craters
+      ctx.fillStyle='rgba(0,0,0,0.06)'; ctx.beginPath(); ctx.arc(cx+22,cy-8,12,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(cx-28,cy+12,9,0,Math.PI*2); ctx.fill();
+      // name overlay
+      ctx.fillStyle='rgba(10,10,10,0.2)'; ctx.fillRect(cx-90,cy+36,180,34);
+      ctx.fillStyle= 'rgba(255,240,210,0.98)'; ctx.font='700 28px Cairo'; ctx.textAlign='center'; ctx.fillText('هولير',cx,cy+60);
+    }
+    drawMoon();
+
+    // download note as image
+    $('#downloadNote').addEventListener('click',()=>{
+      // create a small image with the message
+      const cnv = document.createElement('canvas'); cnv.width=800; cnv.height=400; const c = cnv.getContext('2d');
+      c.fillStyle='#060607'; c.fillRect(0,0,cnv.width,cnv.height);
+      c.fillStyle='#d4af37'; c.font='700 36px Cairo'; c.textAlign='center'; c.fillText('هوليرتي',cnv.width/2,80);
+      c.fillStyle='#fff'; c.font='400 20px Cairo'; wrapText(c, 'حبيبتي بحبك كتير عمري و برجع هون بقلك اسف اذا حسستك اني بخونك دليمن ولا تراني ميتة عليكي.', cnv.width/2, 140, 700, 26);
+      const a = document.createElement('a'); a.href = cnv.toDataURL('image/png'); a.download='note_for_holier.png'; a.click();
+    });
+
+    // helper: wrap text
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+      const words = text.split(' '); let line='';
+      for(let n=0;n<words.length;n++){
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine); const testWidth = metrics.width;
+        if(testWidth > maxWidth && n>0){ ctx.fillText(line, x, y); line = words[n] + ' '; y += lineHeight; } else { line = testLine; }
+      }
+      ctx.fillText(line, x, y);
+    }
+
+    // escape html
+    function escapeHtml(s){ return s.replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'})[ch]); }
+
+    // small UX touches
+    document.addEventListener('visibilitychange',()=>{ if(document.hidden) bgAudio.volume=0.3; else bgAudio.volume=1; });
+
+    // allow keyboard hearts
+    document.addEventListener('keydown',(e)=>{ if(e.key==='h'){ makeHeart(); } });
+    window.addEventListener('load', () => {
+  const audio = document.getElementById('bgAudio');
+  audio.play().catch(()=>console.log('التشغيل التلقائي لم يعمل، متصفحك يمنع ذلك'));
+});
+
+  </script>
+</body>
+</html>
